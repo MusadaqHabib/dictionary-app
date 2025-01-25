@@ -1,1 +1,44 @@
 
+package com.example.mydictionary
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+
+class Saplash : AppCompatActivity() {
+
+    // Lazy initialization of DatabaseOperations
+    private val databaseOperations by lazy { DatabaseOperations(this) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_saplash)
+
+        // Simulate loading data with a delay using coroutine
+        // In a real scenario, you would replace this with actual data loading logic
+        Handler(Looper.getMainLooper()).postDelayed({
+            loadDataAndNavigateToMain()
+        }, 2000) // Simulate a 2-second delay
+    }
+
+    private fun loadDataAndNavigateToMain() {
+        try {
+            // Fetch data using DatabaseOperations
+            val dictionaryData = databaseOperations.fetchDictionaryData()
+
+            // Log the fetched data (for debugging)
+            Log.e("Saplash", "Dictionary data size: ${dictionaryData.size}")
+
+            // Start the main activity and pass the dictionary data
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("dictionaryData", ArrayList(dictionaryData))
+            startActivity(intent)
+            finish() // Finish the splash activity to prevent going back to it from the main activity
+        } catch (e: Exception) {
+            Log.e("Saplash", "Error fetching data: ${e.message}", e)
+            // Handle the error gracefully (e.g., show a message to the user)
+        }
+    }
+}
